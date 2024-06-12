@@ -46,18 +46,18 @@ def read_sw_versions_min_max(sheet, sw_type):
 
         # EM Value
         if sw_type == 'apache':
-            min_version = sheet['B9'].value
-            max_version = sheet['C9'].value
+            min_version = sheet['B15'].value
+            max_version = sheet['C15'].value
 
         # EM Value
         if sw_type == 'oracle_db':
-            min_version = sheet['B11'].value
-            max_version = sheet['C11'].value
+            min_version = sheet['B10'].value
+            max_version = sheet['C10'].value
 
         # EM Value
         if sw_type == 'nodejs':
-            min_version = sheet['B10'].value
-            max_version = sheet['C10'].value
+            min_version = sheet['B9'].value
+            max_version = sheet['C9'].value
 
         return min_version, max_version
 
