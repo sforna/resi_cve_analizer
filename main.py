@@ -2,7 +2,6 @@ import os.path
 import sys
 import openpyxl
 import requests
-import pandas as pd
 from packaging.version import Version
 import argparse
 from enum import Enum
@@ -24,7 +23,9 @@ file_path_input = os.path.join(sys.path[0],"input/")
 file_path_output = os.path.join(sys.path[0],"output/")
 output_filename = 'vulnerabilita_tim_elaborato.xlsm'
 input_filename = args.filename
-api_url = "https://cve.circl.lu/api/cve/"
+# Old api url, not working at the moment
+# api_url = "https://cve.circl.lu/api/cve/"
+api_url = "https://cvepremium.circl.lu/api/cve/"
 
 # Open Workbook
 def open_workbook(file_path):
@@ -63,19 +64,28 @@ def read_sw_versions_min_max(sheet, sw_type):
 
 # getting CVE from API
 def get_api_cve(val):
+    print(f'chiamo API per la CVE {val}')
 
     response = requests.get(f"{api_url}{val}")
-    response_json = response.json()
-
-    #summary = res_json["summary"]
-
-    if response_json:
-
-        data = response_json["vulnerable_configuration"]
-
-    else:
-
+    if response.status_code == 404:
+        
+        print(f'errore 404 per CVE {val}')
+        
         data = []
+    
+    elif response.status_code == 200:
+
+        response_json = response.json()
+
+        #summary = res_json["summary"]
+
+        if response_json:
+
+            data = response_json["vulnerable_configuration"]
+
+        else:
+
+            data = []
 
     return data
 
@@ -206,7 +216,8 @@ def check_vulnerabilities(sheet_sw, vulnerable_configuration):
                 continue
 
 
-        elif parts_field[3] == 'apache':
+        elif parts_field[3] == 'apache' and parts_field[3] == 'http_server':
+            print('si tratta di apache')
 
             min_version, max_version = read_sw_versions_min_max(sheet_sw ,'apache')
 
